@@ -37,6 +37,8 @@ module Serve #:nodoc:
       root = @root_path
       path = filename[root.size..-1]
       layout = nil
+      
+
       until layout or path == "/"
         path = File.dirname(path)
         possible_layouts = extensions.map do |ext|
@@ -46,7 +48,24 @@ module Serve #:nodoc:
         end
         layout = possible_layouts.detect { |o| o }
       end
-      layout
+      return layout if layout
+ 
+      [ filename[0...(-1*File.extname(filename).size)] + ".layout",
+        File.join( File.dirname(filename), "all.layout"),
+        File.join( root, 'layout', "default.layout") ].each do |x|
+        
+        if File.file?(x)
+          return File.join(root, File.new(x).gets.strip)
+        end 
+      end
+
+      possible_layouts = extensions.map do |ext|
+        possible_layout = "#{File.join( root, 'layouts', "default")}.#{ext}"
+        if File.file?( possible_layout )
+          return possible_layout
+        end
+      end
+
     end
     
     def install_view_helpers(context)
