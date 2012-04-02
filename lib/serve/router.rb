@@ -26,6 +26,11 @@ module Serve
       else
         # Still no luck? Check to see if a file with an extension exists by that name.
         # TODO: Return a path with an extension based on priority, not just the first found.
+        ["erb","haml"].each do |ext|
+          result = Dir.glob(full_path + ".#{ext}", File::FNM_CASEFOLD).first
+          return result.sub(/^#{root}/i, '').sub(/^\//, '') if result && File.file?(result)
+        end 
+
         result = Dir.glob(full_path + ".*", File::FNM_CASEFOLD).first
         result.sub(/^#{root}/i, '').sub(/^\//, '') if result && File.file?(result)
       end
