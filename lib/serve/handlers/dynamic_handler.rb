@@ -38,6 +38,11 @@ module Serve #:nodoc:
       path = filename[root.size..-1]
       layout = nil
       
+      special_layout = filename[0...(-1*File.extname(filename).size)] + ".layout"
+      return File.join( root, File.new(special_layout).gets.strip) if File.file?(special_layout)
+
+      special_layout= File.join( File.dirname(special_layout), "all.layout")
+      return File.join(root, File.new(special_layout).gets.strip) if File.file?(special_layout)
 
       until layout or path == "/"
         path = File.dirname(path)
@@ -50,15 +55,6 @@ module Serve #:nodoc:
       end
       return layout if layout
  
-      [ filename[0...(-1*File.extname(filename).size)] + ".layout",
-        File.join( File.dirname(filename), "all.layout"),
-        File.join( root, 'layout', "default.layout") ].each do |x|
-        
-        if File.file?(x)
-          return File.join(root, File.new(x).gets.strip)
-        end 
-      end
-
       possible_layouts = extensions.map do |ext|
         possible_layout = "#{File.join( root, 'layouts', "default")}.#{ext}"
         if File.file?( possible_layout )
