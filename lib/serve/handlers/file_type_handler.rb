@@ -27,7 +27,7 @@ module Serve #:nodoc:
     end
     
     def content_type
-      'text/html'
+      'text/html; charset=UTF-8'
     end
     
     def parse(string)
