@@ -24,7 +24,9 @@ module Serve #:nodoc:
       context = Context.new(@root_path, request, response)
       install_view_helpers(context)
       parser = Parser.new(context)
+      
       context.content << parser.parse_file(@script_filename)
+
       layout = find_layout_for(@script_filename)
       if layout
         parser.parse_file(layout)
@@ -102,7 +104,7 @@ module Serve #:nodoc:
         
         @engine.render(context, locals) do |*args|
           context.get_content_for(*args)
-        end
+        end.force_encoding('UTF-8')
       ensure
         @script_filename = old_script_filename
         @script_extension = old_script_extension
@@ -118,6 +120,8 @@ module Serve #:nodoc:
       def initialize(root_path, request, response)
         @root_path, @request, @response = root_path, request, response
         @content = ''
+        @content.force_encoding("UTF-8")
+
       end
       
       include Serve::ViewHelpers
