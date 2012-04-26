@@ -2,40 +2,48 @@ require 'serve/view_helpers'
 require 'tilt'
 # drity patch for utf-8 encoding
 # from https://github.com/padrino/padrino-framework/issues/519
-module Tilt
-  class HamlTemplate
-    def prepare
-      @data.force_encoding Encoding.default_external  # magic line
-      options = @options.merge(:filename => eval_file, :line => line)
-      @engine = ::Haml::Engine.new(data, options)
+if RUBY_VERSION >= "1.9"
+  module Tilt
+    class HamlTemplate
+      def prepare
+        @data.force_encoding Encoding.default_external  # magic line
+        options = @options.merge(:filename => eval_file, :line => line)
+        @engine = ::Haml::Engine.new(data, options)
+      end
     end
   end
-end
+else
+  class String
+    def force_encoding
+      self
+    end
+  end
+end 
 
 module Serve #:nodoc:
   class DynamicHandler < FileTypeHandler #:nodoc:
-    
+
     def self.extensions
       # Get extensions from Tilt, ugly but it works
       @extensions ||= (Tilt.mappings.map { |k,v| ["#{k}", "html.#{k}"] } << ["slim", "html.slim"]).flatten
     end
-    
+
     def extensions
       self.class.extensions
     end
-    
+
     extension *extensions
-    
+
     def process(request, response)
       response.headers['content-type'] = content_type
       response.body = parse(request, response)
     end
-    
+
     def parse(request, response)
       context = Context.new(@root_path, request, response)
       install_view_helpers(context)
       parser = Parser.new(context)
-      
+
       context.content << parser.parse_file(@script_filename)
 
       layout = find_layout_for(@script_filename)
@@ -45,12 +53,12 @@ module Serve #:nodoc:
         context.content
       end
     end
-    
+
     def find_layout_for(filename)
       root = @root_path
       path = filename[root.size..-1]
       layout = nil
-      
+
       special_layout = filename[0...(-1*File.extname(filename).size)] + ".layout"
       return File.join( root, File.new(special_layout).gets.strip) if File.file?(special_layout)
 
