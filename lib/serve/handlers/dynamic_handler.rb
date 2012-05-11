@@ -109,7 +109,7 @@ module Serve #:nodoc:
         
         @script_extension = ext
         
-        @engine = Tilt[ext].new(filename, nil, :outvar => '@_out_buf')
+        @engine = Tilt[ext].new(filename, nil, :outvar => '@_out_buf', :default_encoding => 'utf-8')
         
         raise "#{ext} extension not supported" if @engine.nil?
         
