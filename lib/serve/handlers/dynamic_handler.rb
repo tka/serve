@@ -1,16 +1,5 @@
 require 'serve/view_helpers'
 require 'tilt'
-# drity patch for utf-8 encoding
-# from https://github.com/padrino/padrino-framework/issues/519
-module Tilt
-  class HamlTemplate
-    def prepare
-      @data.force_encoding Encoding.default_external  # magic line
-      options = @options.merge(:filename => eval_file, :line => line)
-      @engine = ::Haml::Engine.new(data, options)
-    end
-  end
-end
 
 module Serve #:nodoc:
   class DynamicHandler < FileTypeHandler #:nodoc:
@@ -115,7 +104,7 @@ module Serve #:nodoc:
         
         @engine.render(context, locals) do |*args|
           context.get_content_for(*args)
-        end.force_encoding('UTF-8')
+        end
       ensure
         @script_filename = old_script_filename
         @script_extension = old_script_extension
@@ -131,8 +120,7 @@ module Serve #:nodoc:
       def initialize(root_path, request, response)
         @root_path, @request, @response = root_path, request, response
         @content = ''
-        @content.force_encoding("UTF-8")
-
+        @content
       end
       
       include Serve::ViewHelpers
