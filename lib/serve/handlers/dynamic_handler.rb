@@ -64,6 +64,7 @@ module Serve #:nodoc:
         end
       end
 
+      return nil 
     end
     
     def install_view_helpers(context)
