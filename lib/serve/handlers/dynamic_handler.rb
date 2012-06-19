@@ -25,7 +25,7 @@ module Serve #:nodoc:
       install_view_helpers(context)
       parser = Parser.new(context)
       
-      context.content << if RUBY_VERSION > RUBY_VERSION > '1.9' 
+      context.content << if RUBY_VERSION > '1.9' 
         parser.parse_file(@script_filename).force_encoding('utf-8')
       else
         parser.parse_file(@script_filename)
