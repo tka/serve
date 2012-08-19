@@ -105,7 +105,11 @@ module Serve #:nodoc:
         
         @engine = Tilt[ext].new(nil, nil, :outvar => '@_out_buf', :default_encoding => 'utf-8') do
           source = File.read(filename)
-          source.force_encoding('utf-8') if RUBY_VERSION > '1.9' 
+          if RUBY_VERSION > '1.9' 
+            source.force_encoding('utf-8')
+          else
+            source
+          end
         end 
 
         raise "#{ext} extension not supported" if @engine.nil?
