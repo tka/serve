@@ -33,7 +33,8 @@ module Serve
         result.sub(/^#{root}/i, '').sub(/^\//, '') if result && File.file?(result)
       end
       
-      self.resolve(root, URI.unescape(path)) if match_path.nil? && path != URI.unescape(path)
+      match_path = self.resolve(root, URI.unescape(path)) if match_path.nil? && path != URI.unescape(path)
+      match_path 
     end
     
     private
