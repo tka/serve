@@ -5,7 +5,6 @@ module Serve
     # file exists for that path.
     def self.resolve(root, path)
       path = normalize_path(path)
-      
       return if path.nil? # If it's not a valid path, return nothing.
       
       full_path = File.join(root, path)
@@ -25,7 +24,7 @@ module Serve
       else
         # Still no luck? Check to see if a file with an extension exists by that name.
         # TODO: Return a path with an extension based on priority, not just the first found.
-        ["erb", "haml", 'slim'].each do |ext|
+        ["erb", "haml", 'slim', 'liquid'].each do |ext|
           result = Dir.glob(full_path + "*.#{ext}", File::FNM_CASEFOLD).first
           return result.sub(/^#{root}/i, '').sub(/^\//, '') if result && File.file?(result)
         end 
