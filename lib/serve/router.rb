@@ -9,7 +9,7 @@ module Serve
       return if path.nil? # If it's not a valid path, return nothing.
       
       full_path = File.join(root, path)
-      case
+      match_path = case
       when File.file?(full_path)
         # A file exists! Return the matching path.
         path
@@ -33,6 +33,8 @@ module Serve
         result = Dir.glob(full_path + ".*", File::FNM_CASEFOLD).first
         result.sub(/^#{root}/i, '').sub(/^\//, '') if result && File.file?(result)
       end
+      
+      self.resolve(root, URI.unescape(path)) if match_path.nil? && path != URI.unescape(path)
     end
     
     private
