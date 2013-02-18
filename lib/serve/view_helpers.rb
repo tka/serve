@@ -269,10 +269,16 @@ module Serve #:nodoc:
     def javascript_include_tag(*sources)
       options = extract_options!(sources)
 
+      base_folder = if defined? Compass
+                      Compass.configuration.javascripts_dir
+                    else
+                      'javascripts'
+                    end
       sources.map do |source|
+
         content_tag('script', '', {
           'type' => 'text/javascript',
-          'src' => ensure_path(ensure_extension(source, 'js'), 'javascripts')
+          'src' => ensure_path(ensure_extension(source, 'js'), base_folder)
         }.merge(options))
       end.join("\n")
     end
@@ -296,12 +302,17 @@ module Serve #:nodoc:
     def stylesheet_link_tag(*sources)
       options = extract_options!(sources)
 
+      base_folder = if defined? Compass
+                      Compass.configuration.css_dir
+                    else
+                      'stylesheets'
+                    end
       sources.map do |source|
         tag('link', {
           'rel' => 'stylesheet',
           'type' => 'text/css',
           'media' => 'screen',
-          'href' => ensure_path(ensure_extension(source, 'css'), 'stylesheets')
+          'href' => ensure_path(ensure_extension(source, 'css'), base_folder)
         }.merge(options))
       end.join("\n")
     end
