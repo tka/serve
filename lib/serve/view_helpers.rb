@@ -182,6 +182,8 @@ module Serve #:nodoc:
     end
     
     def image_tag(src, html_options = {})
+      src = "/#{Compass.configuration.images_dir}/#{src}" unless src =~ /^(https?:|\/)/
+
       tag(:img, html_options.merge({:src=>src}))
     end
     
