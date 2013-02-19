@@ -281,7 +281,7 @@ module Serve #:nodoc:
         content_tag('script', '', {
           'type' => 'text/javascript',
           'src' => ensure_path(ensure_extension(source, 'js'), base_folder)
-        }.merge(options))
+        }.with_indifferent_access.merge(options))
       end.join("\n")
     end
 
@@ -315,7 +315,7 @@ module Serve #:nodoc:
           'type' => 'text/css',
           'media' => 'screen',
           'href' => ensure_path(ensure_extension(source, 'css'), base_folder)
-        }.merge(options))
+        }.with_indifferent_access.merge(options))
       end.join("\n")
     end
 
